@@ -1,6 +1,14 @@
-import { getArticleBySlug, incrementViewCount } from '@/lib/articles'
+import { getArticleBySlug, incrementViewCount, getPublishedArticles } from '@/lib/articles'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+
+// 静的パラメータ生成
+export async function generateStaticParams() {
+  const articles = await getPublishedArticles()
+  return articles.map((article) => ({
+    slug: article.slug,
+  }))
+}
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const article = await getArticleBySlug(params.slug)
@@ -9,8 +17,8 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     notFound()
   }
 
-  // 閲覧数をカウントアップ
-  await incrementViewCount(article.id)
+  // 静的エクスポートでは閲覧数カウントアップをスキップ
+  // await incrementViewCount(article.id)
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
