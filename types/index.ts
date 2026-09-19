@@ -28,8 +28,6 @@ export interface Article {
   created_at: string
   updated_at: string
   published_at: string | null
-  category?: Category
-  tags?: Tag[]
 }
 
 export interface ArticleWithRelations extends Article {

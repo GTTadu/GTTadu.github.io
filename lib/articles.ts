@@ -95,8 +95,18 @@ export async function searchArticles(query: string): Promise<ArticleWithRelation
 
 // 閲覧数カウントアップ
 export async function incrementViewCount(articleId: string): Promise<void> {
-  await supabase
+  // 現在の閲覧数を取得
+  const { data: article } = await supabase
     .from('articles')
-    .update({ view_count: supabase.raw('view_count + 1') })
+    .select('view_count')
     .eq('id', articleId)
+    .single()
+
+  if (article) {
+    // 閲覧数をインクリメント
+    await supabase
+      .from('articles')
+      .update({ view_count: (article.view_count || 0) + 1 })
+      .eq('id', articleId)
+  }
 }
